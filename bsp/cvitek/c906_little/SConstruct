@@ -31,7 +31,8 @@ CVI_PATHS = {
     'HAL': os.path.join(CVI_COMMON_PATH, 'cvi_hal'),
     'DRIVER': os.path.join(CVI_COMMON_PATH, 'drivers'),
     'TOOL': os.path.join(CVI_COMMON_PATH, 'cvi_tool'),
-    'TEST': os.path.join(CVI_COMMON_PATH, 'cvi_test')
+    'TEST': os.path.join(CVI_COMMON_PATH, 'cvi_test'),
+    'SYS': os.path.join(CVI_COMMON_PATH, 'sys')
 }
 
 HAL_PATH = CVI_PATHS['HAL']
@@ -58,6 +59,11 @@ objs.extend(SConscript(
 objs.extend(SConscript(
     os.path.join(CVI_PATHS['TEST'], 'SConscript'),
     variant_dir='build/cvi_common/cvi_test',
+    duplicate=0
+))
+objs.extend(SConscript(
+    os.path.join(CVI_PATHS['SYS'], 'SConscript'),
+    variant_dir='build/cvi_common/sys',
     duplicate=0
 ))
 

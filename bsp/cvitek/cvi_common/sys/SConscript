@@ -1,9 +1,9 @@
 from building import *
 
 cwd     = GetCurrentDir()
-src     = Glob('*.c') + Glob('*.cpp') + Glob('*.S')
+src =Glob("heartbeat.c")
 CPPPATH = [cwd]
 
-group = DefineGroup('Board', src, depend = [''], CPPPATH = CPPPATH)
+group = DefineGroup('Heartbeat', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

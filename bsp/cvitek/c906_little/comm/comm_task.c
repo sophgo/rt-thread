@@ -303,7 +303,7 @@ void prvQueueISR(int vector, void *param)
 			valid_val = set_val & (1 << i);
 
 			if (valid_val) {
-				cmdqu_t rtos_cmdq;
+				volatile cmdqu_t rtos_cmdq;
 				cmdq = ((cmdqu_t *)mailbox_context) + i;
 
 				debug_printf("mailbox_context =%x\n", mailbox_context);
@@ -315,9 +315,11 @@ void prvQueueISR(int vector, void *param)
 				// need to disable enable bit
 				mbox_reg->cpu_mbox_en[RECEIVE_CPU].mbox_info &= ~valid_val;
 
-				rtos_cmdq = *cmdq;
-
-				memset(cmdq, 0, sizeof(cmdqu_t));
+				// copy cmdq context (8 bytes) to buffer ASAP
+				*((unsigned long *) &rtos_cmdq) = *((unsigned long *)cmdq);
+				asm volatile("fence iorw, iorw" ::: "memory");
+				/* need to clear mailbox interrupt before clear mailbox buffer */
+				*((unsigned long*) cmdq) = 0;
 
 				/* mailbox buffer context is send from linux*/
 				if (rtos_cmdq.resv.valid.linux_valid == 1) {

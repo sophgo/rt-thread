@@ -396,6 +396,7 @@ static const char *pinname_whitelist_uart2_rx[] = {
     "VIVO_CLK",
     "IIC0_SDA",
     "PWR_GPIO1",
+    "UART2_RX",
     NULL,
 };
 static const char *pinname_whitelist_uart2_tx[] = {
@@ -404,6 +405,7 @@ static const char *pinname_whitelist_uart2_tx[] = {
     "VIVO_D2",
     "IIC0_SCL",
     "PWR_GPIO0",
+    "UART2_TX",
     NULL,
 };
 #endif
