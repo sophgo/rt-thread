@@ -17,11 +17,11 @@ _EL0_STACK_SIZE = DEFINED(_EL0_STACK_SIZE) ? _EL0_STACK_SIZE : 1024;
 _EL1_STACK_SIZE = DEFINED(_EL1_STACK_SIZE) ? _EL1_STACK_SIZE : 2048;
 _EL2_STACK_SIZE = DEFINED(_EL2_STACK_SIZE) ? _EL2_STACK_SIZE : 1024;
 
-/* Define Memories in the system */
+log_debug_buffer_size = DEFINED(RT_LOG_DEBUG_BUFFER_SIZE) ? RT_LOG_DEBUG_BUFFER_SIZE : 0x400;
 
 MEMORY
 {
-   psu_ddr_0_MEM_0 : ORIGIN = CVIMMAP_FSBL_C906L_START_ADDR , LENGTH = CVIMMAP_RTOS_SYS_TOTAL_SIZE
+   psu_ddr_0_MEM_0 : ORIGIN = CVIMMAP_FSBL_C906L_START_ADDR , LENGTH = (CVIMMAP_RTOS_SYS_TOTAL_SIZE - log_debug_buffer_size)
 }
 
 /* Specify the default entry point to the program */
@@ -34,6 +34,7 @@ ENTRY(_start)
 SECTIONS
 {
 .text : {
+   __stext = . ;
    KEEP (*(.vectors))
    *(.boot)
    *(.text)
@@ -68,6 +69,7 @@ SECTIONS
    __rt_utest_tc_tab_start = .;
    KEEP(*(UtestTcTab))
    __rt_utest_tc_tab_end = .;
+   __etext = . ;
 } > psu_ddr_0_MEM_0
 
 .init (ALIGN(64)) : {

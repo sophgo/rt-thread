@@ -453,6 +453,10 @@ config RT_USING_CONSOLE
     bool "Using console for rt_kprintf"
     default y
 
+config RT_LOG_DEBUG_BUFFER_ENABLE
+    bool "Enable console log debug buffer for rt_kprintf"
+    default y
+
 if RT_USING_CONSOLE
     config RT_CONSOLEBUF_SIZE
         int "the buffer size for console log printf"

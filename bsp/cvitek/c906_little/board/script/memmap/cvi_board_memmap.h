@@ -1,5 +1,5 @@
-#ifndef __BOARD_MMAP__e3eea54f__
-#define __BOARD_MMAP__e3eea54f__
+#ifndef __BOARD_MMAP__8ecc7b5e__
+#define __BOARD_MMAP__8ecc7b5e__
 
 #define CONFIG_SYS_TEXT_BASE 0x83800000  /* offset 56.0MiB */
 #define CVIMMAP_ATF_SIZE 0xa0000  /* 640.0KiB */
@@ -29,27 +29,27 @@
 #define CVIMMAP_MONITOR_ADDR 0x80000000  /* offset 0.0KiB */
 #define CVIMMAP_OPENSBI_FDT_ADDR 0x800a0000  /* offset 640.0KiB */
 #define CVIMMAP_OPENSBI_SIZE 0xa0000  /* 640.0KiB */
-#define CVIMMAP_PQBIN_ADDR 0x80520000  /* offset 5.125MiB */
+#define CVIMMAP_PQBIN_ADDR 0x80220000  /* offset 2.125MiB */
 #define CVIMMAP_PQBIN_SIZE 0x80000  /* 512.0KiB */
 #define CVIMMAP_RTOS_COMPRESS_BIN_ADDR 0x81ea0000  /* offset 30.625MiB */
 #define CVIMMAP_RTOS_ION_ADDR 0x90000000  /* offset 256.0MiB */
 #define CVIMMAP_RTOS_ION_SIZE 0x0  /* 0.0KiB */
-#define CVIMMAP_RTOS_LOGO_ADDR 0x805a0000  /* offset 5.625MiB */
+#define CVIMMAP_RTOS_LOGO_ADDR 0x802a0000  /* offset 2.625MiB */
 #define CVIMMAP_RTOS_LOGO_SIZE 0x0  /* 0.0KiB */
-#define CVIMMAP_RTOS_LOG_ADDR 0x804a0000  /* offset 4.625MiB */
+#define CVIMMAP_RTOS_LOG_ADDR 0x801a0000  /* offset 1.625MiB */
 #define CVIMMAP_RTOS_LOG_SIZE 0x20000  /* 128.0KiB */
 #define CVIMMAP_RTOS_SYS_ADDR 0x800a0000  /* offset 640.0KiB */
 #define CVIMMAP_RTOS_SYS_SIZE 0x100000  /* 1.0MiB */
 #define CVIMMAP_RTOS_SYS_TOTAL_ADDR 0x800a0000  /* offset 640.0KiB */
 #define CVIMMAP_RTOS_SYS_TOTAL_SIZE 0x100000  /* 1.0MiB */
-#define CVIMMAP_SHARE_MEM_ADDR 0x804c0000  /* offset 4.75MiB */
+#define CVIMMAP_SHARE_MEM_ADDR 0x801c0000  /* offset 1.75MiB */
 #define CVIMMAP_SHARE_MEM_SIZE 0x20000  /* 128.0KiB */
-#define CVIMMAP_SHARE_PARAM_ADDR 0x804e0000  /* offset 4.875MiB */
-#define CVIMMAP_SHARE_PARAM_ADDR_BAK 0x80500000  /* offset 5.0MiB */
+#define CVIMMAP_SHARE_PARAM_ADDR 0x801e0000  /* offset 1.875MiB */
+#define CVIMMAP_SHARE_PARAM_ADDR_BAK 0x80200000  /* offset 2.0MiB */
 #define CVIMMAP_SHARE_PARAM_SIZE 0x20000  /* 128.0KiB */
 #define CVIMMAP_SPL_FDT_ADDR 0x812ffc00  /* offset 18.9990234375MiB */
 #define CVIMMAP_SPL_FDT_SIZE 0x100000  /* 1.0MiB */
 #define CVIMMAP_UIMAG_ADDR 0x81400000  /* offset 20.0MiB */
 #define CVIMMAP_UIMAG_SIZE 0x400000  /* 4.0MiB */
 
-#endif /* __BOARD_MMAP__e3eea54f__ */
+#endif /* __BOARD_MMAP__8ecc7b5e__ */

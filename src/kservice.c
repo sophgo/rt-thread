@@ -361,11 +361,35 @@ void rt_kputs(const char *str)
  *
  * @return The number of characters actually written to buffer.
  */
+
+#ifdef RT_LOG_DEBUG_BUFFER_ENABLE
+extern const rt_uint8_t HeapLimit;
+extern const rt_uint8_t log_debug_buffer_size;
+
+#define RT_HW_HEAP_END      (char *)&HeapLimit
+#define RT_LOG_DEBUG_BUFFER_SIZE  (int)&log_debug_buffer_size
+#define rt_hw_mb()        __asm__ __volatile__ ("fence i,rw" : : : "memory")
+#endif
 rt_weak int rt_kprintf(const char *fmt, ...)
 {
     va_list args;
     rt_size_t length = 0;
     static char rt_log_buf[RT_CONSOLEBUF_SIZE];
+
+#ifdef RT_LOG_DEBUG_BUFFER_ENABLE
+    static u_int32_t debug_buffer_index = 0;
+    u_int32_t copy_buffer_len = 0;
+    char RT_CONSOLEBUF_DEBUG_END[] = "===END===";
+    static u_int16_t clear_true = 0;
+    volatile char *rt_log_debug_buff = RT_HW_HEAP_END;
+    if (!clear_true){
+        rt_memset((void *)rt_log_debug_buff, 0, RT_LOG_DEBUG_BUFFER_SIZE);
+        clear_true = 1;
+    }
+    //char tmp[64] = {0};
+    //rt_snprintf(tmp, sizeof(tmp), "rt_log_debug_buff: <%p>(%d)\r\n", rt_log_debug_buff, RT_LOG_DEBUG_BUFFER_SIZE);
+    //_kputs(tmp, sizeof(tmp));
+#endif /* CONFIG_RT_LOG_DEBUG */
 
     va_start(args, fmt);
     PRINTF_BUFFER_TAKE;
@@ -382,6 +406,31 @@ rt_weak int rt_kprintf(const char *fmt, ...)
     }
 
     _kputs(rt_log_buf, length);
+
+#ifdef RT_LOG_DEBUG_BUFFER_ENABLE
+    /* copy log to debug buffer */
+    if ((debug_buffer_index + length) >= RT_LOG_DEBUG_BUFFER_SIZE){
+        copy_buffer_len = RT_LOG_DEBUG_BUFFER_SIZE - debug_buffer_index;
+        rt_memcpy(rt_log_debug_buff + debug_buffer_index, rt_log_buf, copy_buffer_len);
+
+        debug_buffer_index = 0;
+        rt_memcpy(rt_log_debug_buff + debug_buffer_index, rt_log_buf + copy_buffer_len, length - copy_buffer_len);
+        debug_buffer_index = length - copy_buffer_len;
+    }else{
+        rt_memcpy(rt_log_debug_buff + debug_buffer_index, rt_log_buf, length);
+        //_kputs(rt_log_debug_buff + debug_buffer_index, length);
+        debug_buffer_index += length;
+    }
+
+    /* add end flag */
+    if ((debug_buffer_index + sizeof(RT_CONSOLEBUF_DEBUG_END)) > RT_LOG_DEBUG_BUFFER_SIZE){
+        rt_memcpy(rt_log_debug_buff, RT_CONSOLEBUF_DEBUG_END, sizeof(RT_CONSOLEBUF_DEBUG_END));
+    }else{
+        rt_memcpy(rt_log_debug_buff + debug_buffer_index, RT_CONSOLEBUF_DEBUG_END, sizeof(RT_CONSOLEBUF_DEBUG_END));
+    }
+    rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, (void *)rt_log_debug_buff, RT_LOG_DEBUG_BUFFER_SIZE);
+    rt_hw_mb();
+#endif
 
     PRINTF_BUFFER_RELEASE;
     va_end(args);
