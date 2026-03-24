@@ -28,6 +28,8 @@ if GetDepend('BSP_USING_SELFTEST'):
         src += Glob('bsp/pwm_test.c')
     if GetDepend('BSP_TEST_RTC'):
         src += Glob('bsp/rtc_test.c')
+    if GetDepend('BSP_TEST_DMA'):
+        src += Glob('bsp/dma_test.c')
 
 group = DefineGroup('cvi_test', src, depend=[''], CPPPATH=CPPPATH)
 

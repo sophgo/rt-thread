@@ -464,6 +464,12 @@ endchoice
             config BSP_TEST_PWM
                 bool "Enable BSP_TEST_PWM"
                 default n
+            config BSP_TEST_RTC
+                bool "Enable BSP_TEST_RTC"
+                default n
+            config BSP_TEST_DMA
+                bool "Enable BSP_TEST_DMA"
+                default n
         endif
 
     config BSP_USING_MAILBOX

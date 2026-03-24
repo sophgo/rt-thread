@@ -583,6 +583,9 @@ menu "Cvitek Drivers Configuration"
             config BSP_TEST_RTC
                 bool "Enable BSP_TEST_RTC"
                 default n
+            config BSP_TEST_DMA
+                bool "Enable BSP_TEST_DMA"
+                default n
         endif
 
 endmenu

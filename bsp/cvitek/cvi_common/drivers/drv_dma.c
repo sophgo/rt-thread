@@ -75,7 +75,7 @@ void dma_ch_off(dw_dma_t *dw_dma, uint8_t ch_mask)
         dma_ch_resume(dw_dma, ch_mask);
     dma_ch_en |= (ch_mask << DW_DMAC_CH_EN_WE_OFFSET);
     dma_ch_en &= ~ch_mask;
-    dma_writeq(dw_dma, CH_EN, dma_ch_en);
+    // dma_writeq(dw_dma, CH_EN, dma_ch_en);
     while (dma_readq(dw_dma, CH_EN) & ch_mask) barrier();
 }
 
