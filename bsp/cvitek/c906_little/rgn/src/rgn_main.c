@@ -155,6 +155,10 @@ void prvRGNRunTask(void *pvParameters)
 			canvas.format = OSD_LUT8;
 			break;
 
+		case PIXEL_FORMAT_4BIT_MODE:
+			canvas.format = OSD_LUT4;
+			break;
+
 		case PIXEL_FORMAT_ARGB_4444:
 			canvas.format = OSD_ARGB4444;
 			break;

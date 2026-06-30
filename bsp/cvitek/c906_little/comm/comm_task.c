@@ -309,11 +309,11 @@ void prvQueueISR(int vector, void *param)
 				debug_printf("mailbox_context =%x\n", mailbox_context);
 				debug_printf("sizeof mailbox_context =%x\n",
 							 (unsigned int)sizeof(cmdqu_t));
+				// need to disable enable bit
+				mbox_reg->cpu_mbox_en[RECEIVE_CPU].mbox_info &= ~valid_val;
 				/* mailbox buffer context is send from linux, clear mailbox interrupt */
 				mbox_reg->cpu_mbox_set[RECEIVE_CPU]
 						.cpu_mbox_int_clr.mbox_int_clr = valid_val;
-				// need to disable enable bit
-				mbox_reg->cpu_mbox_en[RECEIVE_CPU].mbox_info &= ~valid_val;
 
 				// copy cmdq context (8 bytes) to buffer ASAP
 				*((unsigned long *) &rtos_cmdq) = *((unsigned long *)cmdq);
