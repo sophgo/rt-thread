@@ -1,0 +1,16 @@
+import os
+from building import *
+
+cwd = GetCurrentDir()
+src = []
+
+if GetDepend('TDL_ENABLE_SPEECH_RECOGNITION'):
+    src += Glob('thirdparty/extracted/kaldi-native-fbank/*.cc')
+    src += Glob('thirdparty/extracted/kissfft/*.c')
+    src = [f for f in src if not os.path.basename(str(f)).startswith('test-')]
+
+if src:
+    group = DefineGroup('cvi_tdl_dep', src, depend=[''])
+    Return('group')
+
+Return([])

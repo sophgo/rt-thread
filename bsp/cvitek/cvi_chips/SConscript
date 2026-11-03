@@ -1,0 +1,11 @@
+from building import *
+
+cwd     = GetCurrentDir()
+src = Glob('*.c')
+
+CPPPATH = [cwd]
+list  = os.listdir(cwd)
+
+group = DefineGroup('cvi_chips', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

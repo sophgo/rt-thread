@@ -1,0 +1,24 @@
+# tools/handwrite-cv/min_test/SConscript — 板端 handwrite-cv 编译 + 自测
+from building import *
+import os
+
+cwd = GetCurrentDir()
+HANDWRITE_ROOT = os.path.join(cwd, os.pardir)
+
+# 核函数源文件
+core_src = Glob(os.path.join(HANDWRITE_ROOT, 'core', '*.cpp'))
+
+# 测试程序
+test_src = [os.path.join(cwd, 'hwcv_board_test.cpp')]
+
+src = core_src + test_src
+
+CPPPATH = [
+    os.path.join(HANDWRITE_ROOT, 'include'),
+    os.path.join(HANDWRITE_ROOT, 'fake_cv', 'opencv2'),
+]
+
+# 不需要链接 OpenCV 库——手写核完全自包含
+group = DefineGroup('handwrite_cv', src, depend=[''],
+                    CPPPATH=CPPPATH)
+Return('group')

@@ -1,0 +1,130 @@
+mainmenu "RT-Thread Project Configuration"
+
+BSP_DIR := .
+
+RTT_DIR := ../../..
+
+PKGS_DIR := packages
+
+source "$(RTT_DIR)/Kconfig"
+#osource "$PKGS_DIR/Kconfig"
+#rsource "board/Kconfig"
+rsource "../drivers/Kconfig"
+
+config BSP_USING_C906L
+    bool
+    select ARCH_RISCV64
+    select ARCH_RISCV_FPU_D
+    select RT_USING_COMPONENTS_INIT
+    default n
+
+config BSP_USING_C906B
+    bool
+    select ARCH_RISCV64
+    select ARCH_RISCV_FPU_D
+    select ARCH_USING_RISCV_COMMON64
+    select RT_USING_SYSTEM_WORKQUEUE
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_CACHE
+    select RT_USING_HW_ATOMIC
+    select RT_USING_DEVICE_OPS
+    select RT_USING_USER_MAIN
+    default y
+
+config BSP_TIMER_CLK_FREQ
+    int
+    default 25000000
+
+config BSP_GPIO_IRQ_BASE
+    int
+    default 60
+
+config BSP_SYS_GPIO_IRQ_BASE
+    int
+    default 70
+
+config SOC_TYPE_SG2000
+    bool
+    default n
+
+config SOC_TYPE_SG2002
+    bool
+    default n
+
+config ENABLE_FPU
+    bool
+    default y
+config ENABLE_VECTOR
+    bool
+    default y
+
+
+choice
+    prompt "Board Type"
+    default BOARD_TYPE_MILKV_DUO256M
+
+    config BOARD_TYPE_MILKV_DUO
+        select BSP_USING_CV18XX
+        bool "milkv-duo"
+
+    config BOARD_TYPE_MILKV_DUO_SPINOR
+        select BSP_USING_CV18XX
+        bool "milkv-duo-spinor"
+
+    config BOARD_TYPE_MILKV_DUO256M
+        select SOC_TYPE_SG2002
+        bool "milkv-duo256m"
+
+    config BOARD_TYPE_MILKV_DUO256M_SPINOR
+        select SOC_TYPE_SG2002
+        bool "milkv-duo256m-spinor"
+
+    config BOARD_TYPE_MILKV_DUOS
+        select SOC_TYPE_SG2000
+        bool "milkv-duos"
+endchoice
+
+config BSP_USING_CV18XX
+    bool
+    select BSP_USING_C906B
+    default y
+
+config IRQ_MAX_NR
+    int
+    default 101
+
+config BSP_GPIO_IRQ_BASE
+    int
+    default 60
+
+config BSP_SYS_GPIO_IRQ_BASE
+    int
+    default 70
+
+config SOC_TYPE_CV180XB_QFN
+    bool
+    default n
+
+config SOC_TYPE_CV181XC_QFN
+    bool
+    default n
+
+config SOC_TYPE_CV181XH_BGA
+    bool
+    default n
+
+config __CV180X__
+    bool
+    default n
+
+config __CV181X__
+    bool
+    default n
+
+config ARCH_MAINSTACK
+    int "main stack size"
+    default 4096
+
+config ARCH_INTERRUPTSTACK
+    int "interrupt stack size"
+    default 4096

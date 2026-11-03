@@ -1,0 +1,12 @@
+from building import *
+import rtconfig
+
+cwd = GetCurrentDir()
+CPPPATH = [
+    cwd + r'/include/',
+]
+group = DefineGroup('cvi_mw_isp_af', [], depend = [''],
+    CPPPATH = CPPPATH,
+    LIBPATH = [cwd + r'/lib/' + rtconfig.SOC_SERIES_MAP[rtconfig.SOC_TYPE]],
+    LIBS = ['isp_isp_af'])
+Return('group')

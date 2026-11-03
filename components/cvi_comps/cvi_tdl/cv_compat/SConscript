@@ -1,0 +1,14 @@
+import os
+from building import *
+
+cwd = GetCurrentDir()
+src = []
+
+# handwrite-cv 核心源文件
+src += Glob('core/*.cpp')
+
+if src:
+    group = DefineGroup('cvi_tdl_hwcv', src, depend=[''])
+    Return('group')
+
+Return([])

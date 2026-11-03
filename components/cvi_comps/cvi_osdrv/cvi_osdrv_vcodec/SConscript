@@ -1,0 +1,19 @@
+from building import *
+import rtconfig
+
+cwd = GetCurrentDir()
+CPPPATH = [
+    cwd + r'/include/',
+    cwd + r'/common/include',
+    cwd + r'/fw_h26x/include',
+    cwd + r'/h26x/include',
+    cwd + r'/jpeg/include',
+    cwd + r'/../include/common/kapi',
+    cwd + r'/../include/chip/cv180x/uapi',
+    cwd + r'/../include/chip/cv181x/uapi',
+]
+group = DefineGroup('cvi_osdrv_vcodec', [], depend = [''],
+    CPPPATH = CPPPATH,
+    LIBPATH = [cwd + r'/lib/' + rtconfig.SOC_SERIES_MAP[rtconfig.SOC_TYPE]],
+    LIBS = ['cvi_osdrv_vcodec'])
+Return('group')

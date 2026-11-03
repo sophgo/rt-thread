@@ -1,0 +1,29 @@
+from building import *
+import os
+
+cwd = GetCurrentDir()
+driver_root = os.path.dirname(cwd)
+LIB_ROOT = os.path.join(driver_root, '..', 'libraries')
+
+src = []
+
+if GetDepend('BSP_USING_DMA'):
+    src += ['drv_dma.c']
+    src += ['../../libraries/dma/dw_dma.c']
+
+# Selftest moved from cvi_common/cvi_test (see README.selftest.md at the
+# drivers/ root). The DMA test also drives SPI, so it needs the SPI HAL
+# header from libraries/spi.
+if GetDepend('BSP_USING_SELFTEST') and GetDepend('BSP_TEST_DMA'):
+    src += ['test/dma_test.c']
+
+CPPDEFINES = ['-DCONFIG_64BIT']
+CPPPATH = [
+    LIB_ROOT,
+    os.path.join(LIB_ROOT, 'dma'),
+    os.path.join(LIB_ROOT, 'spi'),
+]
+
+group = DefineGroup('drivers.dma', src, depend = ['BSP_USING_DMA'], CPPDEFINES = CPPDEFINES, CPPPATH = CPPPATH)
+
+Return('group')

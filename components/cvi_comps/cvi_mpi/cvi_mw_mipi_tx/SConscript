@@ -1,0 +1,20 @@
+from building import *
+
+cwd     = GetCurrentDir()
+src     = []
+CPPDEFINES = []
+CPPPATH = []
+
+#include
+CPPPATH += [cwd +r'/../include/']
+
+
+
+#print(CPPPATH)
+# src
+src += [r'./src/cvi_mipi_tx.c']
+
+#print(src)
+cvi_mw_mipi_tx = DefineGroup('cvi_mw_mipi_tx', src, depend = [''], CPPDEFINES = CPPDEFINES, CPPPATH = CPPPATH)
+
+Return('cvi_mw_mipi_tx')

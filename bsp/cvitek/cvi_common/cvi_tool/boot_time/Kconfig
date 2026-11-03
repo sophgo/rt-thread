@@ -1,0 +1,10 @@
+config CONFIG_DUMP_RECORD_TIME
+    bool "Dump Record Time"
+    default n
+    depends on !SOLUTION_CV18XX_BOOT
+    help
+      Print CV180x/CV181x FSBL, boot loader and application main timestamps
+      in milliseconds. Applications call cvi_boot_time_record() at main entry
+      and cvi_boot_time_dump() after console initialization. The early boot
+      records wrap after 65.536 seconds; use a cold boot for comparisons.
+      With FinSH/MSH enabled, the boottime command prints the saved snapshot.

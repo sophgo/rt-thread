@@ -1,0 +1,506 @@
+menu "Cvitek Drivers Configuration"
+
+    config BSP_USING_DMA
+        bool "Using DesignWare DMA"
+        default y
+
+    menuconfig BSP_USING_USB
+        bool "Using USB"
+        default y
+        help
+            Enable USB driver support for the platform.
+            This will allow you to use USB devices in host or device mode.
+
+        if BSP_USING_USB
+            choice
+                prompt "USB Framework Selection"
+                help
+                    Select the USB driver to be used. Only one can be selected.
+
+                config BSP_USING_CHERRYUSB
+                    bool "Using CherryUSB"
+                    help
+                        Select CherryUSB as the USB driver implementation.
+                    rsource "usb/cherryusb/Kconfig"
+
+                config BSP_USING_TEST
+                    bool "Using TEST"
+                    help
+                        Select TEST as the USB driver implementation.
+                    # rsource "usb/cherryusb/Kconfig"
+            endchoice
+
+        endif
+
+    menuconfig BSP_USING_UART
+        bool "Using UART"
+        select RT_USING_SERIAL
+        default y
+
+        if BSP_USING_UART
+            config BSP_USING_UART0
+                bool "Enable UART 0"
+                default y
+
+            config BSP_USING_UART1
+                bool "Enable UART 1"
+                default y
+
+            config BSP_USING_UART2
+                bool "Enable UART 2"
+                default n
+
+            config BSP_USING_UART3
+                bool "Enable UART 3"
+                default n
+
+            config BSP_USING_UART4
+                bool "Enable UART 4"
+                default n
+
+            config BSP_UART_IRQ_BASE
+                int
+                default 44
+        endif
+
+    menuconfig BSP_USING_I2C
+        bool "Using I2C"
+        select RT_USING_I2C
+        select RT_USING_I2C_BITOPS
+        select RT_USING_PIN
+        default n
+
+        if BSP_USING_I2C
+            config BSP_USING_I2C0
+                bool "Enable I2C0"
+                default n
+
+            config BSP_USING_I2C1
+                bool "Enable I2C1"
+                default n
+
+            config BSP_USING_I2C2
+                bool "Enable I2C2"
+                default n
+
+            config BSP_USING_I2C3
+                bool "Enable I2C3"
+                default n
+
+            config BSP_USING_I2C4
+                bool "Enable I2C4"
+                default n
+
+            config BSP_I2C_IRQ_BASE
+                int
+                default 49
+        endif
+
+    menuconfig BSP_USING_ADC
+        bool "Using ADC"
+        select RT_USING_ADC
+        default n
+
+    menuconfig BSP_USING_SPI
+        bool "Using SPI"
+        select RT_USING_SPI
+        default n
+
+        if BSP_USING_SPI
+            config BSP_USING_SPI0
+                bool "Enable SPI 0"
+                default n
+
+                if BSP_USING_SPI0
+                    config BSP_SPI0_SCK_PINNAME
+                        string "spi0 sck pin name"
+                        default ""
+                    config BSP_SPI0_SDO_PINNAME
+                        string "spi0 sdo pin name"
+                        default ""
+                    config BSP_SPI0_SDI_PINNAME
+                        string "spi0 sdi pin name"
+                        default ""
+                    config BSP_SPI0_CS_PINNAME
+                        string "spi0 cs pin name"
+                        default ""
+                endif
+
+            config BSP_USING_SPI1
+                bool "Enable SPI 1"
+                default n
+
+                if BSP_USING_SPI1
+                    config BSP_SPI1_SCK_PINNAME
+                        string "spi1 sck pin name"
+                        default ""
+                    config BSP_SPI1_SDO_PINNAME
+                        string "spi1 sdo pin name"
+                        default ""
+                    config BSP_SPI1_SDI_PINNAME
+                        string "spi1 sdi pin name"
+                        default ""
+                    config BSP_SPI1_CS_PINNAME
+                        string "spi1 cs pin name"
+                        default ""
+                endif
+
+            config BSP_USING_SPI2
+                bool "Enable SPI 2"
+                default n
+
+                if BSP_USING_SPI2
+                    config BSP_SPI2_SCK_PINNAME
+                        string "spi2 sck pin name"
+                        default ""
+                    config BSP_SPI2_SDO_PINNAME
+                        string "spi2 sdo pin name"
+                        default ""
+                    config BSP_SPI2_SDI_PINNAME
+                        string "spi2 sdi pin name"
+                        default ""
+                    config BSP_SPI2_CS_PINNAME
+                        string "spi2 cs pin name"
+                        default ""
+                endif
+
+            config BSP_USING_SPI3
+                bool "Enable SPI 3"
+                default n
+
+                if BSP_USING_SPI3
+                    config BSP_SPI3_SCK_PINNAME
+                        string "spi3 sck pin name"
+                        default ""
+                    config BSP_SPI3_SDO_PINNAME
+                        string "spi3 sdo pin name"
+                        default ""
+                    config BSP_SPI3_SDI_PINNAME
+                        string "spi3 sdi pin name"
+                        default ""
+                    config BSP_SPI3_CS_PINNAME
+                        string "spi3 cs pin name"
+                        default ""
+                endif
+        endif
+
+    config BSP_USING_SPI_FLASH
+        bool "Enable SPI FLASH"
+        default n
+
+    menuconfig BSP_USING_WDT
+        bool "Enable Watchdog Timer"
+        select RT_USING_WDT
+        default n
+
+        if BSP_USING_WDT
+            config BSP_USING_WDT0
+                bool "Enable WDT0"
+                default n
+
+            config BSP_USING_WDT1
+                bool "Enable WDT1"
+                default n
+
+            config BSP_USING_WDT2
+                bool "Enable WDT2"
+                default n
+        endif
+
+    menuconfig BSP_USING_TIMER
+        bool "Enable TIMER"
+        default n
+        select RT_USING_HWTIMER
+        if BSP_USING_TIMER
+            config BSP_USING_TIMER0
+                bool "Enable TIMER0"
+                default n
+
+            config BSP_USING_TIMER1
+                bool "Enable TIMER1"
+                default n
+
+            config BSP_USING_TIMER2
+                bool "Enable TIMER2"
+                default n
+
+            config BSP_USING_TIMER3
+                bool "Enable TIMER3"
+                default n
+
+            config BSP_USING_TIMER4
+                bool "Enable TIMER4"
+                default n
+
+            config BSP_USING_TIMER5
+                bool "Enable TIMER5"
+                default n
+
+            config BSP_USING_TIMER6
+                bool "Enable TIMER6"
+                default n
+
+            config BSP_USING_TIMER7
+                bool "Enable TIMER7"
+                default n
+
+            config BSP_TIMER_IRQ_BASE
+                int
+                default 79
+        endif
+
+    menuconfig BSP_USING_PWM
+        bool "Using PWM"
+        select RT_USING_PWM
+        default n
+
+        if BSP_USING_PWM
+            config BSP_USING_PWM0
+                bool "Enable PWM 0"
+                default n
+
+            config BSP_USING_PWM1
+                bool "Enable PWM 1"
+                default n
+
+            config BSP_USING_PWM2
+                bool "Enable PWM 2"
+                default n
+
+            config BSP_USING_PWM3
+                bool "Enable PWM 3"
+                default n
+        endif
+
+    config BSP_USING_RTC
+        bool "Enable RTC"
+        select RT_USING_RTC
+        default n
+
+    if BSP_USING_RTC
+        config RTC_USING_HW_CALIB
+            bool "Enable RTC hardware calibration"
+            default n
+            help
+                Enable hardware-based RTC calibration feature.
+                If N, we use software calibration instead.
+    endif
+
+    config BSP_USING_SDH
+        select RT_USING_SDIO
+        select RT_USING_DFS
+        select RT_USING_DFS_ELMFAT
+        select RT_USING_DFS_DISKFS
+        bool "Enable Secure Digital Host Controller"
+        default n
+
+    config BSP_USING_ETH
+        bool "Enable Ethernet"
+        default n
+        select RT_USING_LWIP
+        select RT_USING_POSIX_FS
+        select RT_USING_POSIX_SOCKET
+
+    config BSP_USING_TPU
+        bool "Enable TPU"
+        default y
+
+    config BSP_USING_EFUSE
+        bool "Using EFUSE API"
+        default n
+
+        if BSP_USING_EFUSE
+            config BSP_USING_EFUSE_FASTBOOT
+                bool "Provision FastBoot automatically on boot"
+                default n
+                help
+                    Call efuse_fastboot() from the application after boot.
+
+                    Provision the selected download sources as button/pin
+                    driven FastBoot, or revert them to normal download.
+                    Unselected sources are not modified. Sources already
+                    in FastBoot or disabled mode are skipped when provisioning.
+                    The explicit EnableFastBoot API still selects all sources;
+                    The efuse tool queries by default and requires confirmation
+                    for explicit enable/revert operations.
+
+            if BSP_USING_EFUSE_FASTBOOT
+                config BSP_EFUSE_FASTBOOT_UART
+                    bool "Apply to UART download"
+                    default y
+
+                config BSP_EFUSE_FASTBOOT_SD
+                    bool "Apply to SD download"
+                    default y
+
+                config BSP_EFUSE_FASTBOOT_USB
+                    bool "Apply to USB download"
+                    default y
+
+                config BSP_EFUSE_FASTBOOT_REVERT
+                    bool "Revert selected sources to normal download"
+                    default n
+                    help
+                        Add the second OTP bit to change FastBoot (01) or
+                        disabled (10) sources to normal download (11).
+                        Sources in 00/11 are left untouched. CUSTOMER is
+                        not modified. Once reverted to 11, the source
+                        cannot be configured as FastBoot/disabled again.
+            endif
+
+            config CONFIG_BOOT_FREQ_HIGHER
+                int "Program eFuse for a 750MHz CPU boot clock (irreversible), 1 = on"
+                range 0 1
+                default 0
+                help
+                    Burn eFuse Bonding0 bit11 on boot; the CPU boots at 750MHz
+                    from the next power-on. OTP, cannot be reverted.
+        endif
+
+    config BSP_USING_SPACC
+        bool "Using SPACC API"
+        default n
+
+    menuconfig BSP_USING_DRIVER_TOOL
+        bool "ENABLE DRIVER_TOOLS"
+        select RT_USING_DRIVER_TOOL
+        default n
+
+        if BSP_USING_DRIVER_TOOL
+            config BSP_USING_EFUSE_TOOL
+                bool "Enable eFUSE tool"
+                depends on BSP_USING_EFUSE && FINSH_USING_MSH
+                default n
+                help
+                    Provide efuse sn/dump/read/write/fastboot subcommands.
+                    FastBoot queries by default; OTP writes require confirmation.
+
+            config BSP_USING_WDT_TOOL
+                bool "Enable Watchdog tool"
+                depends on BSP_USING_WDT
+                default n
+
+            config BSP_USING_I2C_TOOL
+                bool "Enable I2C_TOOL"
+                default n
+
+            config BSP_USING_PINMUX
+                bool "Enable CVI_PINMUX"
+                default n
+
+            config BSP_USING_PERF_TOOL
+                bool "Enable Real-time Performance Tool"
+                default n
+            
+            config BSP_USING_NETUTILS
+                bool "Enable NetUtils tools"
+                default n
+                select RT_USING_LWIP
+
+                if BSP_USING_NETUTILS
+                    config PKG_NETUTILS_IPERF
+                        bool "Enable iperf"
+                        default n
+
+                    config PKG_NETUTILS_TELNET
+                        bool "Enable telnet server"
+                        default n
+                endif
+        endif
+
+    config BSP_USING_LITTLEFS
+        bool "Enable littlefs"
+        depends on RT_USING_DFS_V2
+        select RT_USING_MTD_NOR
+        default n
+
+    menuconfig BSP_USING_SELFTEST
+        bool "ENABLE SELFTEST"
+        default n
+
+        if BSP_USING_SELFTEST
+            config BSP_TEST_GPIO
+                bool "Enable GPIO_SELFTEST"
+                default n
+            config BSP_TEST_SPI
+                bool "Enable SPI_SELFTEST"
+                default n
+            config BSP_TEST_TPU
+                bool "Enable TPU_SELFTEST"
+                default n
+            config BSP_TEST_RTC
+                depends on BSP_USING_RTC
+                bool "Enable RTC_SELFTEST"
+                default n
+            config BSP_TEST_TIMER
+                depends on BSP_USING_TIMER
+                bool "Enable TIMER_SELFTEST"
+                default n
+            config BSP_TEST_ADC
+                depends on BSP_USING_ADC
+                bool "Enable ADC_SELFTEST"
+                default n
+            config BSP_TEST_PWM
+                depends on BSP_USING_PWM
+                bool "Enable PWM_SELFTEST"
+                default n
+            config BSP_TEST_ETH
+                depends on BSP_USING_ETH
+                bool "Enable ETH_SELFTEST"
+                default n
+            config BSP_TEST_SD
+                depends on BSP_USING_SDH
+                bool "Enable SD_SELFTEST"
+                default n
+            config BSP_TEST_SPIF
+                depends on BSP_USING_SPI_FLASH
+                bool "Enable SPIF_SELFTEST"
+                default n
+            config BSP_TEST_UART
+                depends on BSP_USING_UART
+                bool "Enable UART_SELFTEST"
+                default n
+            config BSP_TEST_DMA
+                depends on BSP_USING_DMA
+                bool "Enable DMA_SELFTEST"
+                default n
+            config BSP_TEST_PINMUX
+                bool "Enable PINMUX_SELFTEST"
+                default n
+            config BSP_TEST_IIC
+                depends on BSP_USING_I2C
+                bool "Enable I2C_SELFTEST"
+                default n
+            config BSP_TEST_SPACC
+                depends on BSP_USING_SPACC
+                bool "Enable SPACC_SELFTEST"
+                default n
+            config BSP_TEST_AUDIO
+                depends on BSP_USING_AUDIO
+                bool "Enable AUDIO_SELFTEST"
+                default n
+        endif
+    config BSP_USING_DRV_PINMUX
+        bool "Using DRV_PINMUX API"
+        default n
+	menuconfig BSP_USING_AUDIO
+        bool "Using DesignWare AUDIO"
+		select RT_USING_AUDIO
+		select RT_USING_CPLUSPLUS
+        default y
+
+        if RT_USING_AUDIO && BSP_USING_AUDIO
+
+
+            config BSP_USING_I2S
+                bool "Enable dw i2s"
+				select BSP_USING_DMA
+                default y
+
+            config BSP_USING_CODEC
+                bool "Enable audio codec"
+                default y
+
+        endif
+
+endmenu

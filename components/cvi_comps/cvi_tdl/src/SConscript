@@ -1,0 +1,142 @@
+import os
+from building import *
+
+cwd = GetCurrentDir()
+
+# nn 模块映射：目录名 → 宏名
+nn_modules = {
+    'object_detection': 'TDL_ENABLE_OBJECT_DETECTION',
+    'image_classification': 'TDL_ENABLE_IMAGE_CLASSIFICATION',
+    'segmentation': 'TDL_ENABLE_SEGMENTATION',
+    'keypoints_detection': 'TDL_ENABLE_KEYPOINTS_DETECTION',
+    'face_detection': 'TDL_ENABLE_FACE_DETECTION',
+    'face_attribute': 'TDL_ENABLE_FACE_ATTRIBUTE',
+    'face_landmark': 'TDL_ENABLE_FACE_LANDMARK',
+    'face_recognition': 'TDL_ENABLE_FACE_RECOGNITION',
+    'feature_extract': 'TDL_ENABLE_FEATURE_EXTRACT',
+    'object_tracking': 'TDL_ENABLE_OBJECT_TRACKING',
+    'depth_estimation': 'TDL_ENABLE_DEPTH_ESTIMATION',
+    'license_plate_recognition': 'TDL_ENABLE_LICENSE_PLATE_RECOGNITION',
+    'speech_recognition': 'TDL_ENABLE_SPEECH_RECOGNITION',
+    'audio_classification': 'TDL_ENABLE_AUDIO_CLASSIFICATION',
+}
+
+# cv 模块映射
+cv_modules = {
+    'motion_detect': 'TDL_ENABLE_MOTION_DETECT',
+    'occlusion_detect': 'TDL_ENABLE_OCCLUSION_DETECT',
+    'intrusion_detect': 'TDL_ENABLE_INTRUSION_DETECT',
+    'target_search': 'TDL_ENABLE_TARGET_SEARCH',
+}
+
+src = []
+
+# nn 模块：递归遍历，全部编译（factory 引用所有模块符号）
+nn_base = os.path.join(cwd, 'components/nn')
+if os.path.isdir(nn_base):
+    for root, dirs, files in os.walk(nn_base):
+        for f in files:
+            if not f.endswith('.cpp'):
+                continue
+            if f.startswith(('bm_', 'bmcv_', 'test-')):
+                continue
+            src.append(os.path.join(root, f))
+
+# cv 模块：递归遍历，按宏控制（common/ 子目录始终编译）
+cv_base = os.path.join(cwd, 'components/cv')
+if os.path.isdir(cv_base):
+    for root, dirs, files in os.walk(cv_base):
+        for f in files:
+            if not f.endswith('.cpp'):
+                continue
+            if f.startswith(('bm_', 'bmcv_', 'test-')):
+                continue
+            fpath = os.path.join(root, f)
+            rel = os.path.relpath(fpath, cv_base)
+            parts = rel.split(os.sep)
+            if len(parts) >= 2:
+                parent_dir = parts[0]
+                # common 目录始终编译
+                if parent_dir == 'common' or parts[1] == 'common':
+                    src.append(fpath)
+                    continue
+                macro = cv_modules.get(parent_dir)
+                if macro and not GetDepend(macro):
+                    continue
+            src.append(fpath)
+
+# video_decoder 始终编译（排除 bm_*）
+vd_src = Glob('components/video_decoder/*.cpp')
+vd_src += Glob('components/video_decoder/vi_decoder/*.cpp')
+vd_src += Glob('components/video_decoder/image_folder/*.cpp')
+vd_src = [f for f in vd_src if not os.path.basename(str(f)).startswith(('bm_', 'bmcv_'))]
+src += vd_src
+
+# framework 始终编译（排除 bm*/bmcv* 平台文件和 llm_model.cpp）
+for subdir in ['net', 'image', 'memory', 'model', 'common', 'preprocess', 'tensor', 'utils']:
+    fw_src = Glob('framework/' + subdir + '/*.cpp')
+    fw_src = [f for f in fw_src if not os.path.basename(str(f)).startswith(('bm', 'bmcv'))]
+    fw_src = [f for f in fw_src if os.path.basename(str(f)) not in ('llm_model.cpp',)]
+    src += fw_src
+
+# c_apis 始终编译
+src += Glob('c_apis/src/*.cpp')
+
+# app 暂不编译（app 层应用，非核心，有 M_PI/hypot 兼容问题）
+# app_base = os.path.join(cwd, 'app')
+# if os.path.isdir(app_base):
+#     for root, dirs, files in os.walk(app_base):
+#         for f in files:
+#             if f.endswith('.cpp') and not f.startswith(('bm_', 'bmcv_', 'test-')):
+#                 src.append(os.path.join(root, f))
+pipeline_base = os.path.join(cwd, 'pipeline')
+if os.path.isdir(pipeline_base):
+    for root, dirs, files in os.walk(pipeline_base):
+        for f in files:
+            if f.endswith('.cpp') and not f.startswith(('bm_', 'bmcv_', 'test-')):
+                src.append(os.path.join(root, f))
+
+# 排除 llm
+if not GetDepend('TDL_ENABLE_LLM'):
+    src = [f for f in src if 'llm' not in str(f).lower()]
+
+# 排除已知不支持的文件
+src = [f for f in src if os.path.basename(str(f)) not in ('llm_model.cpp',)]
+
+CPPPATH = [
+    cwd + '/../include',
+    cwd + '/../include/c_apis',
+    cwd + '/../include/components',
+    cwd + '/../include/framework',
+    cwd + '/../include/nn',
+    cwd,
+    cwd + '/c_apis/src',
+    cwd + '/c_apis/include',
+    cwd + '/framework',
+    cwd + '/components',
+    cwd + '/components/nn',
+    cwd + '/components/cv',
+    cwd + '/components/cv/motion_detect',
+    cwd + '/components/video_decoder',
+    cwd + '/app',
+    cwd + '/../cv_compat/fake_cv',
+    cwd + '/../cv_compat/fake_cv/opencv2',
+    cwd + '/../cv_compat/include',
+    cwd + '/../dependency/thirdparty/extracted/nlohmannjson',
+    cwd + '/../dependency/thirdparty/extracted/eigen',
+    cwd + '/../dependency/thirdparty/extracted/kaldi-native-fbank',
+    cwd + '/../dependency/thirdparty/extracted/kissfft',
+    # cvi_mpi / cvi_osdrv / cvi_tpu 是 cvi_tdl 的兄弟目录（向上 2 级到 cvi_comps）
+    # src/ → cvi_tdl/ → cvi_comps/ → cvi_mpi | cvi_osdrv | cvi_tpu
+    cwd + '/../../../../cvi_rtt/boards/common/include',
+    cwd + '/../../cvi_mpi/include',
+    cwd + '/../../cvi_osdrv/include',
+    cwd + '/../../cvi_osdrv/include/common/uapi',
+    cwd + '/../../cvi_tpu/include',
+]
+
+LOCAL_CCFLAGS = ' -D__CV181X__ -D__CV180X__ -DNO_OPEN_CV -fexceptions -frtti -fno-threadsafe-statics -include newlib_compat.h -DDISABLE_SPEECH_RECOGNITION -DDISABLE_AUDIO_CLASSIFICATION -DDISABLE_RTSP -DDISABLE_LOG'
+
+group = DefineGroup('cvi_tdl_src', src, depend=[''],
+                    CPPPATH=CPPPATH, LOCAL_CCFLAGS=LOCAL_CCFLAGS)
+Return('group')

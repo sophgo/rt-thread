@@ -1,0 +1,20 @@
+from building import *
+import os
+
+cwd = GetCurrentDir()
+driver_root = os.path.dirname(cwd)
+LIB_ROOT = os.path.join(driver_root, '..', 'libraries')
+src = []
+
+src += ['drv_reset.c']
+src += ['../../libraries/reset/cvi_reset.c']
+
+CPPDEFINES = ['-DCONFIG_64BIT']
+CPPPATH = [
+    LIB_ROOT,
+    os.path.join(LIB_ROOT, 'reset'),
+]
+
+group = DefineGroup('drivers.reset', src, depend = [''], CPPDEFINES = CPPDEFINES, CPPPATH = CPPPATH)
+
+Return('group')

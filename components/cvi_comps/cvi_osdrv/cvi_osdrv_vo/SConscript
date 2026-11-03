@@ -1,0 +1,43 @@
+from building import *
+
+# Import SOC_TYPE from upper level SConscript
+Import('SOC_TYPE')
+
+# Parse SOC_TYPE to get chip series
+chip_series = "cv181x" if "181" in SOC_TYPE else "cv180x"
+
+cwd     = GetCurrentDir()
+src     = []
+CPPDEFINES = []
+CPPPATH = []
+
+# rtt include
+CPPPATH += [cwd + r'/../../../../include/']
+
+#include
+CPPPATH += [cwd]
+CPPPATH += [cwd + r'/common/']
+CPPPATH += [cwd + r'/chip/' + chip_series + '/']
+CPPPATH += [cwd + r'/chip/' + chip_series + '/proc/']
+CPPPATH += [cwd + r'/../internal_include']
+CPPPATH += [cwd + r'/../include/common/uapi/']
+CPPPATH += [cwd + r'/../include/common/kapi/']
+CPPPATH += [cwd + r'/../include/chip/' + chip_series + '/uapi']
+
+CPPPATH += [cwd + r'/../../../../bsp/cvitek/libraries/pinctrl/chip/' + chip_series]
+CPPPATH += [cwd + r'/../cvi_osdrv_base/']
+
+#print(CPPPATH)
+# src
+src += [r'./chip/' + chip_series + '/mipi_tx.c']
+src += [r'./chip/' + chip_series + '/vo_sdk_layer.c']
+src += [r'./chip/' + chip_series + '/vo.c']
+src += [r'./chip/' + chip_series + '/proc/vo_proc.c']
+src += [r'./common/vo_core.c']
+src += [r'./common/vo_rgn_ctrl.c']
+# CPPDEFINES += ['-D__CV181X__']
+
+#print(src)
+cvi_osdrv_vo = DefineGroup('cvi_osdrv_vo', src, depend = [''], CPPDEFINES = CPPDEFINES, CPPPATH = CPPPATH)
+
+Return('cvi_osdrv_vo')

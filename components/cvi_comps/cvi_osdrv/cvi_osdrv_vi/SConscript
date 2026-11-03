@@ -1,0 +1,31 @@
+from building import *
+
+cwd     = GetCurrentDir()
+src     = []
+CPPDEFINES = []
+CPPPATH = []
+
+#include
+CPPPATH += [cwd + r'/../internal_include']
+# CPPPATH += [cwd + r'/chip/cv181x/']
+CPPPATH += [cwd + r'/chip/cv181x/uapi/']
+CPPPATH += [cwd + r'/../include']
+CPPPATH += [cwd + r'/../include/common/uapi']
+CPPPATH += [cwd + r'/../include/common/kapi']
+CPPPATH += [cwd + r'/chip/cv181x/']
+CPPPATH += [cwd + r'/chip/cv181x/proc/']
+CPPPATH += [cwd + r'/chip/cv181x/vip/']
+CPPPATH += [cwd + r'/common/']
+
+
+#print(CPPPATH)
+# src
+src += Glob(r'./chip/cv181x/*.c')
+src += Glob(r'./chip/cv181x/proc/*.c')
+src += Glob(r'./chip/cv181x/vip/*.c')
+src += Glob(r'./common/*.c')
+
+#print(src)
+cvi_osdrv_vi = DefineGroup('cvi_osdrv_vi', src, depend = [''], CPPDEFINES = CPPDEFINES, CPPPATH = CPPPATH)
+
+Return('cvi_osdrv_vi')

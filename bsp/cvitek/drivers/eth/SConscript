@@ -1,0 +1,30 @@
+from building import *
+import os
+
+cwd = GetCurrentDir()
+driver_root = os.path.dirname(cwd)
+LIB_ROOT = os.path.join(driver_root, '..', 'libraries')
+
+src = []
+
+if GetDepend('BSP_USING_ETH'):
+    src += ['drv_eth.c']
+    src += ['../../libraries/eth/dw_eth_mac.c']
+    src += ['../../libraries/eth/cvi_eth_phy.c']
+    src += ['../../libraries/eth/eth_phy_cvitek.c']
+    src += ['../../libraries/eth/cvi_ephy.c']
+
+# Selftest moved from cvi_common/cvi_test (see README.selftest.md at the
+# drivers/ root).
+if GetDepend('BSP_USING_SELFTEST') and GetDepend('BSP_TEST_ETH'):
+    src += ['test/eth_test.c']
+
+CPPDEFINES = ['-DCONFIG_64BIT']
+CPPPATH = [
+    LIB_ROOT,
+    os.path.join(LIB_ROOT, 'eth'),
+]
+
+group = DefineGroup('drivers.eth', src, depend = ['BSP_USING_ETH'], CPPDEFINES = CPPDEFINES, CPPPATH = CPPPATH)
+
+Return('group')

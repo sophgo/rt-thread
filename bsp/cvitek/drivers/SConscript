@@ -1,0 +1,95 @@
+from building import *
+import os
+
+cwd     = GetCurrentDir()
+src     = []
+CPPDEFINES = []
+
+# Select the per-chip pinctrl directory: consumers include "pinctrl.h" and
+# get the pin tables for the SoC being built (only one chip dir is on the
+# include path at a time).
+CHIP_TYPE = 'cv180x'
+if GetDepend('__CV181X__'):
+    CHIP_TYPE = 'cv181x'
+elif GetDepend('__CV180X__'):
+    CHIP_TYPE = 'cv180x'
+
+CPPPATH = [cwd]
+
+# IP register-level libraries now live one level up from the drivers/ root.
+LIB_ROOT = os.path.join(cwd, '..', 'libraries')
+CPPPATH += [LIB_ROOT]
+CPPPATH += [os.path.join(LIB_ROOT, 'pinctrl', 'chip', CHIP_TYPE)]
+
+# Public per-module driver headers live at the module root after the module
+# split. Aggregate them so groups defined elsewhere (board code, cvi_test,
+# cvi_comps) keep resolving their drv_*.h / hal_dma.h includes.
+for module in ['adc', 'dma', 'efuse', 'gpio', 'i2c', 'i2s',
+               'pinctrl', 'pwm', 'rtc', 'sdhci', 'spacc', 'spi', 'timer',
+               'tpu', 'uart', 'wdt']:
+    CPPPATH += [os.path.join(cwd, module)]
+
+if GetDepend('BSP_USING_CODEC'):
+    # Codec register-level sources live in the libraries tree; relative src
+    # strings keep the objects under build/<sol>_<proj>/libraries/codec/.
+    src += [
+        '../libraries/codec/drv_phy_adc.c',
+        '../libraries/codec/drv_phy_dac.c',
+    ]
+    CPPPATH += [os.path.join(LIB_ROOT, 'codec')]
+
+if GetDepend(['BSP_USING_SPI_FLASH']):
+    # Enumerate instead of Glob: the sources sit outside this SConscript's
+    # variant root (bsp/cvitek/libraries is a sibling of drivers/), and a
+    # '../libraries' Glob from the drivers variant context matches nothing.
+    # Relative src strings keep the objects under build/<sol>_<proj>/libraries/.
+    src += [
+        '../libraries/spiflash/src/spiflash.c',
+        '../libraries/spiflash/src/spi_nor.c',
+        '../libraries/spiflash/src/spi_nand_ids.c',
+        '../libraries/spiflash/src/cvitek_spi_nand.c',
+        '../libraries/spiflash/src/cvitek_spi_nor.c',
+        '../libraries/spiflash/src/nandflash.c',
+        '../libraries/spiflash/src/nand_test.c',
+    ]
+    CPPPATH += [os.path.join(LIB_ROOT, 'spiflash', 'include')]
+
+if GetDepend('BSP_ROOTFS_TYPE_CROMFS'):
+    src += ['port/mnt_cromfs.c']
+elif GetDepend('BSP_ROOTFS_TYPE_DISKFS'):
+    src += ['port/mnt_diskfs.c']
+elif GetDepend('BSP_ROOTFS_TYPE_ROMFS'):
+    src += ['port/mnt_romfs.c']
+
+if GetDepend('RT_USING_FAL'):
+    src += ['port/fal_flash_sfud_port.c']
+    src += ['port/fal_flash_nand_port.c']
+    CPPPATH += [cwd + r'/port']
+
+CPPDEFINES += ['-DCONFIG_64BIT']
+
+group = DefineGroup('drivers', src, depend = [''], CPPDEFINES = CPPDEFINES, CPPPATH = CPPPATH)
+
+group += SConscript('reset/SConscript')
+group += SConscript('gpio/SConscript')
+group += SConscript('pinctrl/SConscript')
+group += SConscript('dma/SConscript')
+group += SConscript('wdt/SConscript')
+group += SConscript('spi/SConscript')
+group += SConscript('sdhci/SConscript')
+group += SConscript('eth/SConscript')
+group += SConscript('rtc/SConscript')
+group += SConscript('timer/SConscript')
+group += SConscript('tpu/SConscript')
+group += SConscript('efuse/SConscript')
+group += SConscript('spacc/SConscript')
+group += SConscript('uart/SConscript')
+group += SConscript('i2c/SConscript')
+group += SConscript('i2s/SConscript')
+group += SConscript('adc/SConscript')
+group += SConscript('pwm/SConscript')
+
+if GetDepend('BSP_USING_USB'):
+    group +=  SConscript('usb/SConscript')
+
+Return('group')

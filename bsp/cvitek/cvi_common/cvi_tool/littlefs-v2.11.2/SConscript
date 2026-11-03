@@ -1,0 +1,13 @@
+from building import *
+
+src = Glob('*.c')
+
+# LFS_THREADSAFE affects struct lfs_config layout: it must be defined here for
+# the whole group, not via rtconfig.h (scons cannot see the -DLFS_CONFIG
+# indirection, so lfs.c would not rebuild and a mixed-ABI link results).
+group = DefineGroup('littlefs', src,
+                    depend = ['BSP_USING_LITTLEFS', 'RT_USING_DFS'],
+                    CPPPATH = [GetCurrentDir()],
+                    CPPDEFINES = ['LFS_CONFIG=lfs_config.h', 'LFS_THREADSAFE'])
+
+Return('group')

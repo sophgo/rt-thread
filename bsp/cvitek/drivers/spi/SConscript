@@ -1,0 +1,30 @@
+from building import *
+import os
+
+cwd = GetCurrentDir()
+driver_root = os.path.dirname(cwd)
+LIB_ROOT = os.path.join(driver_root, '..', 'libraries')
+
+src = []
+
+if GetDepend('BSP_USING_SPI'):
+    src += ['drv_spi.c']
+    src += ['../../libraries/spi/dw_spi.c']
+
+# Selftest moved from cvi_common/cvi_test (see README.selftest.md at the
+# drivers/ root). spif_test exercises the SPI flash FAL stack gated by
+# BSP_USING_SPI_FLASH; the SPI loopback test needs the DMA HAL headers.
+if GetDepend('BSP_USING_SELFTEST') and GetDepend('BSP_TEST_SPI'):
+    src += ['test/spi_loopback_test.c']
+if GetDepend('BSP_USING_SELFTEST') and GetDepend('BSP_TEST_SPIF'):
+    src += ['test/spif_test.c']
+
+CPPDEFINES = ['-DCONFIG_64BIT']
+CPPPATH = [
+    LIB_ROOT,
+    os.path.join(LIB_ROOT, 'spi'),
+]
+
+group = DefineGroup('drivers.spi', src, depend = ['BSP_USING_SPI'], CPPDEFINES = CPPDEFINES, CPPPATH = CPPPATH)
+
+Return('group')

@@ -1,0 +1,15 @@
+from building import *
+
+# Anchor SConscript for the IP register-level libraries tree.
+#
+# The library sources (one directory per IP) stay owned by the per-module
+# SConscripts under ../drivers/<module>/, which reference them with relative
+# '../../libraries/<ip>/x.c' src entries so the objects land in the build
+# variant tree. This anchor exists so the build mounts this directory as a
+# variant dir (build/<solution>_<project>/libraries): without a mount of its
+# own, sources resolved outside the drivers variant root would not map back
+# to this tree and the build would fail to find them.
+
+group = []
+
+Return('group')

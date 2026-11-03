@@ -1,0 +1,21 @@
+import os
+from building import *
+
+cwd = GetCurrentDir()
+objs = []
+
+if GetDepend('CVI_USING_TDL'):
+    for entry in ['src', 'cv_compat', 'dependency']:
+        sconscript = os.path.join(cwd, entry, 'SConscript')
+        if os.path.isfile(sconscript):
+            objs.extend(SConscript(os.path.join(entry, 'SConscript')))
+
+    CPPPATH = [
+        cwd + '/include',
+        cwd + '/include/c_apis',
+    ]
+
+    group = DefineGroup('cvi_tdl', objs, depend=[''], CPPPATH=CPPPATH)
+    Return('group')
+
+Return('objs')

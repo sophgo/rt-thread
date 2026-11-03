@@ -1,0 +1,30 @@
+from building import *
+import os
+
+cwd = GetCurrentDir()
+driver_root = os.path.dirname(cwd)
+LIB_ROOT = os.path.join(driver_root, '..', 'libraries')
+
+src = []
+
+if GetDepend('BSP_USING_I2S'):
+    src += ['drv_i2s.c']
+    # DW I2S register-level implementation lives in the IP library.
+    src += ['../../libraries/i2s/dw_i2s.c']
+
+# Audio play/record tests moved from drivers/audio (they exercise the i2s
+# audio devices, see README.selftest.md at the drivers/ root).
+if GetDepend('BSP_USING_SELFTEST') and GetDepend('BSP_TEST_AUDIO'):
+    src += ['test/test_audio_play.c']
+    src += ['test/test_audio_record.c']
+
+CPPDEFINES = ['-DCONFIG_64BIT']
+CPPPATH = [
+    LIB_ROOT,
+    os.path.join(LIB_ROOT, 'i2s'),
+    cwd,
+]
+
+group = DefineGroup('drivers.i2s', src, depend = ['BSP_USING_I2S'], CPPDEFINES = CPPDEFINES, CPPPATH = CPPPATH)
+
+Return('group')

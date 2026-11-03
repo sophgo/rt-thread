@@ -1,0 +1,22 @@
+from building import *
+import os
+
+cwd = GetCurrentDir()
+driver_root = os.path.dirname(cwd)
+LIB_ROOT = os.path.join(driver_root, '..', 'libraries')
+
+src = []
+
+if GetDepend('BSP_USING_EFUSE'):
+    src += ['drv_efuse.c']
+    src += ['../../libraries/efuse/cvi_efuse.c']
+
+CPPDEFINES = ['-DCONFIG_64BIT']
+CPPPATH = [
+    LIB_ROOT,
+    os.path.join(LIB_ROOT, 'efuse'),
+]
+
+group = DefineGroup('drivers.efuse', src, depend = ['BSP_USING_EFUSE'], CPPDEFINES = CPPDEFINES, CPPPATH = CPPPATH)
+
+Return('group')

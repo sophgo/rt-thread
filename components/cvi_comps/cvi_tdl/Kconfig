@@ -1,0 +1,77 @@
+menu "TDL Module Options"
+    config TDL_ENABLE_OBJECT_DETECTION
+        bool "Enable object detection"
+        default y
+
+    config TDL_ENABLE_IMAGE_CLASSIFICATION
+        bool "Enable image classification"
+        default y
+
+    config TDL_ENABLE_LICENSE_PLATE_RECOGNITION
+        bool "Enable license plate recognition"
+        default y
+
+    config TDL_ENABLE_KEYPOINTS_DETECTION
+        bool "Enable keypoints detection"
+        default y
+
+    config TDL_ENABLE_FACE_DETECTION
+        bool "Enable face detection"
+        default n
+
+    config TDL_ENABLE_FACE_ATTRIBUTE
+        bool "Enable face attribute"
+        default n
+
+    config TDL_ENABLE_FACE_LANDMARK
+        bool "Enable face landmark"
+        default n
+
+    config TDL_ENABLE_FACE_RECOGNITION
+        bool "Enable face recognition"
+        default n
+
+    config TDL_ENABLE_FEATURE_EXTRACT
+        bool "Enable feature extraction"
+        default n
+
+    config TDL_ENABLE_OBJECT_TRACKING
+        bool "Enable object tracking"
+        default n
+
+    config TDL_ENABLE_DEPTH_ESTIMATION
+        bool "Enable depth estimation"
+        default n
+
+    config TDL_ENABLE_SEGMENTATION
+        bool "Enable segmentation"
+        default n
+
+    config TDL_ENABLE_SPEECH_RECOGNITION
+        bool "Enable speech recognition"
+        default n
+
+    config TDL_ENABLE_AUDIO_CLASSIFICATION
+        bool "Enable audio classification"
+        default n
+
+    config TDL_ENABLE_MOTION_DETECT
+        bool "Enable motion detection"
+        default n
+
+    config TDL_ENABLE_OCCLUSION_DETECT
+        bool "Enable occlusion detection"
+        default n
+
+    config TDL_ENABLE_INTRUSION_DETECT
+        bool "Enable intrusion detection"
+        default n
+
+    config TDL_ENABLE_TARGET_SEARCH
+        bool "Enable target search"
+        default n
+
+    config TDL_ENABLE_LLM
+        bool "Enable LLM (BM platform only)"
+        default n
+endmenu

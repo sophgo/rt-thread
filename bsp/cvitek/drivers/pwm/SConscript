@@ -1,0 +1,34 @@
+from building import *
+import os
+
+cwd = GetCurrentDir()
+driver_root = os.path.dirname(cwd)
+LIB_ROOT = os.path.join(driver_root, '..', 'libraries')
+
+chip_type = 'cv180x'
+if GetDepend('__CV181X__'):
+    chip_type = 'cv181x'
+elif GetDepend('__CV180X__'):
+    chip_type = 'cv180x'
+
+src = []
+
+# Selftest moved from cvi_common/cvi_test (see README.selftest.md at the
+# drivers/ root).
+if GetDepend('BSP_USING_SELFTEST') and GetDepend('BSP_TEST_PWM'):
+    src += ['test/pwm_test.c']
+
+if GetDepend('BSP_USING_PWM'):
+    src += ['drv_pwm.c']
+    src += ['../../libraries/pwm/cvi_pwm.c']
+
+CPPDEFINES = ['-DCONFIG_64BIT']
+CPPPATH = [
+    LIB_ROOT,
+    os.path.join(LIB_ROOT, 'pwm'),
+    os.path.join(LIB_ROOT, 'pinctrl', 'chip', chip_type),
+]
+
+group = DefineGroup('drivers.pwm', src, depend = ['BSP_USING_PWM'], CPPDEFINES = CPPDEFINES, CPPPATH = CPPPATH)
+
+Return('group')

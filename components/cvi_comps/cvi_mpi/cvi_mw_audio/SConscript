@@ -1,0 +1,13 @@
+from building import *
+import rtconfig
+
+cwd = GetCurrentDir()
+CPPPATH = [
+    cwd + r'/include/',
+    cwd + r'/../include',
+]
+group = DefineGroup('cvi_mw_audio', [], depend = ['RT_USING_AUDIO'],
+    CPPPATH = CPPPATH,
+    LIBPATH = [cwd + r'/lib/' + rtconfig.SOC_SERIES_MAP[rtconfig.SOC_TYPE]],
+    LIBS = ['aud_common', 'aud_vqe', 'aud_codec', 'aud_effect', 'aud_resample', 'aud_ssp'])
+Return('group')

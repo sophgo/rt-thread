@@ -1,0 +1,62 @@
+from building import *
+import os
+
+cwd = GetCurrentDir()
+
+src = []
+objs = []
+
+CPPPATH = [cwd]
+
+if GetDepend('BSP_USING_DRIVER_TOOL'):
+    src += Glob('devmem_tool.c')
+    if GetDepend('BSP_USING_EFUSE_TOOL'):
+        src += Glob('efuse_tool.c')
+        CPPPATH += [os.path.join(cwd, '../../drivers/efuse')]
+    if GetDepend('BSP_USING_WDT_TOOL'):
+        src += Glob('wdt_tool.c')
+        CPPPATH += [os.path.join(cwd, '../../drivers/wdt')]
+        CPPPATH += [os.path.join(cwd, '../../libraries')]
+        CPPPATH += [os.path.join(cwd, '../../libraries/wdt')]
+    if GetDepend('SOC_TYPE_CV180XB_QFN'):
+        src += Glob('clk/chip_cv180x/clksts.c')
+    if any([
+        GetDepend('SOC_TYPE_CV181XC_QFN'),
+        GetDepend('SOC_TYPE_CV181XH_BGA')
+    ]):
+        src += Glob('clk/chip_cv181x/clksts.c')
+    if GetDepend('BSP_USING_PERF_TOOL'):
+        src += Glob('cpu_usage/perf_stat.c')
+    if GetDepend('BSP_USING_PINMUX'):
+        if GetDepend('SOC_TYPE_CV180XB_QFN'):
+            src += Glob('cvi_pinmux/chip_cv180x/cvi_pinmux.c')
+        if any([
+            GetDepend('SOC_TYPE_CV181XC_QFN'),
+            GetDepend('SOC_TYPE_CV181XH_BGA')
+        ]):
+            src += Glob('cvi_pinmux/chip_cv181x/cvi_pinmux.c')
+        if GetDepend('BSP_USING_I2C_TOOL'):
+            src += Glob('i2c_tool.c')
+
+    # define this group's sources first
+    group = DefineGroup('cvi_tools', src, depend=[''], CPPPATH=CPPPATH)
+    objs += group
+
+    # optional NetUtils tools collection (returns object/group list)
+    if GetDepend('BSP_USING_NETUTILS'):
+        net_objs = SConscript('netutils-v1.3.3/SConscript')
+        objs += net_objs
+
+# Boot timing is independent of driver tools and FinSH. Export the header
+# path even when disabled, so applications can use the no-op API.
+boot_time_src = []
+if GetDepend('CONFIG_DUMP_RECORD_TIME'):
+    boot_time_src = Glob('boot_time/cvi_boot_time.c')
+objs += DefineGroup('cvi_boot_time', boot_time_src, depend=[''],
+                    CPPPATH=[os.path.join(cwd, 'boot_time')])
+
+# optional littlefs filesystem (returns object/group list)
+if GetDepend('BSP_USING_LITTLEFS'):
+    lfs_objs = SConscript('littlefs-v2.11.2/SConscript')
+    objs += lfs_objs
+Return('objs')
